@@ -7,5 +7,6 @@ export interface TwitterPost {
   likes: number;
   retweets: number;
   replies: number;
-  avatar: string;
+  avatar: string | null;
+  image?: string;
 }

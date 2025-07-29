@@ -1,9 +1,10 @@
 import TwitterFeed from './components/TwitterFeed';
+import LaunchedTokens from './components/LaunchedTokens';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-7xl mx-auto py-8 px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Discover & Launch Tokens
@@ -13,7 +14,14 @@ export default function Home() {
           </p>
         </div>
         
-        <TwitterFeed />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-1">
+            <TwitterFeed />
+          </div>
+          <div className="lg:col-span-1">
+            <LaunchedTokens />
+          </div>
+        </div>
       </div>
     </div>
   );

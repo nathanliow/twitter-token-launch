@@ -144,8 +144,8 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       platformId: newMintData.platformId,
       txVersion: TxVersion.V0,
       slippage: new BN(100), // 100 = 1%
-      buyAmount: new BN(solAmount * LAMPORTS_PER_SOL), 
-      createOnly: false,
+      buyAmount: solAmount !== 0 ? new BN(solAmount * LAMPORTS_PER_SOL) : new BN(0), 
+      createOnly: solAmount !== 0 ? false : true,
 
       supply: newMintData.supply, 
       totalSellA: newMintData.totalSellA, 

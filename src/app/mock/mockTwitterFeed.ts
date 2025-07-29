@@ -10,7 +10,8 @@ export const mockPosts: TwitterPost[] = [
     likes: 1247,
     retweets: 89,
     replies: 23,
-    avatar: '/avatars/zach.jpg'
+    avatar: '/avatars/zach.jpg',
+    image: '/pics/testPic1.png'
   },
   {
     id: '2',
@@ -32,6 +33,234 @@ export const mockPosts: TwitterPost[] = [
     likes: 2103,
     retweets: 234,
     replies: 67,
-    avatar: '/avatars/master.jpg'
+    avatar: null,
+    image: '/pics/testPic2.png'
+  },
+  {
+    id: '4',
+    author: 'Solana Sorcerer',
+    handle: '@SolSorcerer',
+    content: 'Just airdropped 10k tokens to early community members 🪂 Thank you all for believing in the vision!',
+    timestamp: '8h',
+    likes: 1782,
+    retweets: 143,
+    replies: 39,
+    avatar: null
+  },
+  {
+    id: '5',
+    author: 'DeFi Queen',
+    handle: '@DeFiQueen',
+    content: 'Yield farming is about to get a major upgrade. Watch this space 👀',
+    timestamp: '1d',
+    likes: 2145,
+    retweets: 221,
+    replies: 88,
+    avatar: '/avatars/hunter.jpg',
+    image: '/pics/testPic3.png'
+  },
+  {
+    id: '6',
+    author: 'The Real Dev',
+    handle: '@therealdev',
+    content: 'Wrote 12k lines of Rust today. Still broke, but my code is clean 🧼',
+    timestamp: '3h',
+    likes: 1430,
+    retweets: 113,
+    replies: 27,
+    avatar: null
+  },
+  {
+    id: '7',
+    author: 'Anon Trader',
+    handle: '@anontrades',
+    content: 'Turned 0.1 SOL into 20 SOL in 48 hours. Still not financial advice.',
+    timestamp: '2d',
+    likes: 3012,
+    retweets: 453,
+    replies: 198,
+    avatar: null,
+    image: '/pics/testPic4.png'
+  },
+  {
+    id: '8',
+    author: 'NFT Whisperer',
+    handle: '@nftwhispers',
+    content: 'Some of you really paid 3 SOL for a rock jpeg. And I support you.',
+    timestamp: '12h',
+    likes: 1176,
+    retweets: 89,
+    replies: 64,
+    avatar: null
+  },
+  {
+    id: '9',
+    author: 'Chain Prof',
+    handle: '@chainprof',
+    content: 'On-chain data never lies. New wallets interacting with XYZ Protocol just spiked 400% 🚨',
+    timestamp: '5h',
+    likes: 905,
+    retweets: 77,
+    replies: 32,
+    avatar: '/avatars/commander.jpg'
+  },
+  {
+    id: '10',
+    author: 'Airdrop Hunter',
+    handle: '@hunterairdrops',
+    content: 'Don’t sleep on this airdrop coming next week. You’ll regret it later 😤',
+    timestamp: '10h',
+    likes: 2114,
+    retweets: 326,
+    replies: 103,
+    avatar: '/avatars/hunter.jpg'
+  },
+  {
+    id: '11',
+    author: 'The Rug Watcher',
+    handle: '@rugwatcher',
+    content: 'If the devs won’t dox or show the multisig, you already know what time it is. 🧻',
+    timestamp: '2d',
+    likes: 1583,
+    retweets: 187,
+    replies: 56,
+    avatar: '/avatars/watcher.jpg'
+  },
+  {
+    id: '12',
+    author: 'Token Analyst',
+    handle: '@TokenIntel',
+    content: 'Analyzed 50+ tokens this month. Only 3 had actual revenue. Stay sharp out there.',
+    timestamp: '3d',
+    likes: 1322,
+    retweets: 96,
+    replies: 21,
+    avatar: null
+  },
+  {
+    id: '13',
+    author: 'ShillBot9000',
+    handle: '@shillbot9000',
+    content: 'JUST IN: $BONKTORCH is going parabolic 📈 Don’t miss the next $DOGE!',
+    timestamp: '30m',
+    likes: 634,
+    retweets: 78,
+    replies: 12,
+    avatar: null,
+    image: '/pics/testPic5.png'
+  },
+  {
+    id: '14',
+    author: 'Web3 Intern',
+    handle: '@web3_intern',
+    content: 'Just deployed a smart contract with no test suite. Wish me luck.',
+    timestamp: '4h',
+    likes: 988,
+    retweets: 101,
+    replies: 44,
+    avatar: null
+  },
+  {
+    id: '15',
+    author: 'Liquidity Goblin',
+    handle: '@liqgoblin',
+    content: 'I smell fresh LP incentives. Goblin senses tingling 🧙‍♂️💧',
+    timestamp: '7h',
+    likes: 749,
+    retweets: 67,
+    replies: 19,
+    avatar: null,
+    image: '/pics/testPic2.png'
+  },
+  {
+    id: '16',
+    author: 'PumpSniper',
+    handle: '@snipethepump',
+    content: 'Caught the candle at launch. Sniped the first dip. Now sipping coffee. ☕',
+    timestamp: '9h',
+    likes: 1143,
+    retweets: 133,
+    replies: 46,
+    avatar: null
+  },
+  {
+    id: '17',
+    author: 'Fair Launch Frog',
+    handle: '@launchfrog',
+    content: 'Fair launches only 🐸 No insider allocations, no team wallet tricks.',
+    timestamp: '6h',
+    likes: 876,
+    retweets: 90,
+    replies: 25,
+    avatar: null
+  },
+  {
+    id: '18',
+    author: 'Wallet Wizard',
+    handle: '@walletwiz',
+    content: 'Secured my seed phrase in a lead box under the floorboards. Hope I never move.',
+    timestamp: '11h',
+    likes: 1682,
+    retweets: 139,
+    replies: 51,
+    avatar: '/avatars/wizard.jpg',
+    image: '/pics/testPic4.png'
+  },
+  {
+    id: '19',
+    author: 'LaunchPad Larry',
+    handle: '@launchlarry',
+    content: 'Three token launches this week, and I haven’t slept since Wednesday 😅',
+    timestamp: '1d',
+    likes: 1197,
+    retweets: 121,
+    replies: 34,
+    avatar: null
+  },
+  {
+    id: '20',
+    author: 'GasFeeGhost',
+    handle: '@gasghost',
+    content: 'Gas fees on Ethereum made me cry again. Solana is peace ✌️',
+    timestamp: '3d',
+    likes: 1930,
+    retweets: 203,
+    replies: 77,
+    avatar: null
+  },
+  {
+    id: '21',
+    author: 'Bot Commander',
+    handle: '@cmdrbot',
+    content: 'Trading bots are up 18% this week. Set it, forget it, profit.',
+    timestamp: '4d',
+    likes: 1485,
+    retweets: 162,
+    replies: 49,
+    avatar: '/avatars/commander.jpg',
+    image: '/pics/testPic3.png'
+  },
+  {
+    id: '22',
+    author: 'Degen Educator',
+    handle: '@degen101',
+    content: 'If you can’t explain your tokenomics in 3 sentences, you’re hiding something.',
+    timestamp: '8h',
+    likes: 2120,
+    retweets: 241,
+    replies: 82,
+    avatar: null,
+    image: '/pics/testPic5.png'
+  },
+  {
+    id: '23',
+    author: 'AlphaLeak',
+    handle: '@alphaleak',
+    content: 'Early beta for a new launch platform dropping soon. Zero fees. You heard it here first.',
+    timestamp: '10h',
+    likes: 2673,
+    retweets: 301,
+    replies: 94,
+    avatar: null
   }
 ];

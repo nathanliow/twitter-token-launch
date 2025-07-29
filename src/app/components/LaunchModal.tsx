@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { TwitterPost } from '../interfaces/TwitterPost';
+import { LaunchedToken } from '../interfaces/LaunchedToken';
 import { createBonkMint } from '../launchpad/bonk/createBonkMint';
 import { submitBonkTransaction } from '../launchpad/bonk/submitBonkTransaction';
 import { BONK_DECIMALS } from '../launchpad/bonk/consts';
 import { connection } from '../launchpad/bonk/config';
+import { launchpads } from '../interfaces/launchpad/launchpads';
 
 interface LaunchModalProps {
   post: TwitterPost;
@@ -15,6 +17,11 @@ interface LaunchModalProps {
 
 export default function LaunchModal({ post, onClose }: LaunchModalProps) {
   const { publicKey, connected, signTransaction } = useWallet();
+  
+  const availableImages = [
+    { type: 'avatar', url: post.avatar, label: 'Profile Photo', fallback: post.author.charAt(0).toUpperCase() },
+    ...(post.image ? [{ type: 'post', url: post.image, label: 'Post Image' }] : []),
+  ];
   
   const [formData, setFormData] = useState({
     name: '',
@@ -29,12 +36,34 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const saveTokenToLocalStorage = (tokenData: LaunchedToken) => {
+    if (!publicKey) return;
+    
+    try {
+      const storageKey = `launchedTokens_${publicKey.toString()}`;
+      const existing = localStorage.getItem(storageKey);
+      const tokens = existing ? JSON.parse(existing) : [];
+      
+      tokens.unshift(tokenData); 
+      localStorage.setItem(storageKey, JSON.stringify(tokens));
+    } catch (error) {
+      console.error('Failed to save token to localStorage:', error);
+    }
+  };
+
+  const urlToFile = async (url: string, filename: string): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +92,18 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
 
     try {
       if (formData.selectedPlatform === 'bonk') {
+        const selectedImageData = availableImages[formData.selectedImage];
+        let imageToUse: File | undefined = formData.uploadedImage || undefined;
+        
+        if (!imageToUse && selectedImageData?.url && !imageErrors.has(formData.selectedImage)) {
+          try {
+            const filename = selectedImageData.type === 'avatar' ? 'avatar.jpg' : 'post-image.jpg';
+            imageToUse = await urlToFile(selectedImageData.url, filename);
+          } catch (error) {
+            console.warn('Failed to convert image URL to file:', error);
+          }
+        }
+
         const result = await createBonkMint({
           params: {
             name: formData.name,
@@ -72,7 +113,7 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
             uri: '',
             website: formData.website || '',
             twitter: formData.twitterUrl || '',
-            image: formData.uploadedImage || undefined
+            image: imageToUse
           },
           walletPublicKey: publicKey,
           solAmount: solAmount
@@ -97,6 +138,23 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
           // Finally, send the signed transaction to the blockchain
           const txId = await connection.sendTransaction(signedTransaction, { skipPreflight: true });
           
+          // Save the launched token to localStorage
+          const launchedToken: LaunchedToken = {
+            id: `${result.mint}_${Date.now()}`,
+            name: formData.name,
+            symbol: formData.symbol,
+            description: formData.description,
+            mint: result.mint,
+            txId,
+            platform: 'bonk',
+            solAmount,
+            timestamp: new Date().toISOString(),
+            website: formData.website,
+            twitterUrl: formData.twitterUrl,
+            metadataLink: result.metadataLink
+          };
+          
+          saveTokenToLocalStorage(launchedToken);
           console.log('Token launched successfully:', { txId, mint: result.mint });
           onClose();
         } else {
@@ -226,51 +284,58 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
           <div>
             <label className="block text-sm font-medium mb-2">Token Image</label>
             <div className="flex space-x-2 items-center">
-              {[0, 1, 2].map((index) => (
+              {availableImages.map((img, index) => (
                 <div
                   key={index}
-                  onClick={() => handleInputChange('selectedImage', index.toString())}
-                  className={`w-16 h-16 rounded border-2 cursor-pointer flex items-center justify-center ${
+                  onClick={() => setFormData(prev => ({ ...prev, selectedImage: index }))}
+                  className={`w-16 h-16 rounded-full border-2 cursor-pointer flex items-center justify-center overflow-hidden ${
                     formData.selectedImage === index
                       ? 'border-blue-500 bg-blue-500 bg-opacity-20'
                       : 'border-gray-600 bg-gray-800'
                   }`}
                 >
-                  {index === 0 ? (
-                    <span className="text-gray-400">📷</span>
-                  ) : (
-                    <span className="text-gray-400">👤</span>
-                  )}
-                </div>
-              ))}
-              <label className="w-16 h-16 bg-gray-800 border border-gray-600 rounded flex items-center justify-center hover:bg-gray-700 cursor-pointer">
-                <span className="text-gray-400">⬆️</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
-              {formData.uploadedImage && (
-                <div className="text-sm text-green-400">
-                  ✓ {formData.uploadedImage.name}
-                </div>
-              )}
+                {img.url && !imageErrors.has(index) ? (
+                  <img
+                    src={img.url}
+                    alt={img.label}
+                    className="w-full h-full object-cover"
+                    onError={() => {
+                      setImageErrors(prev => new Set(prev).add(index));
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                    <span className="text-gray-300 font-bold text-lg">
+                      {img.fallback || img.label.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+            <label className="w-16 h-16 bg-gray-800 border border-gray-600 rounded flex items-center justify-center hover:bg-gray-700 cursor-pointer">
+              <span className="text-gray-400">⬆️</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+            {formData.uploadedImage && (
+              <div className="text-sm text-green-400">
+                ✓ {formData.uploadedImage.name}
+              </div>
+            )}
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">Platform</label>
             <p className="text-gray-400 text-sm mb-3">
-              {formData.selectedPlatform === 'bonk' ? "Let'sBonk" : 'Pump.Fun'}
+              {launchpads.find((platform) => platform.id === formData.selectedPlatform)?.name}
             </p>
             <div className="flex space-x-2">
-              {[
-                { id: 'pump', name: 'Pump.Fun', icon: '🟢' },
-                { id: 'bonk', name: 'Let\'sBonk', icon: '🟠' },
-                // { id: 'jupiter', name: 'Jupiter', icon: '🟢' }
-              ].map((platform) => (
+              {launchpads.map((platform) => (
                 <button
                   key={platform.id}
                   onClick={() => handleInputChange('selectedPlatform', platform.id)}
@@ -289,7 +354,7 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
         </div>
 
         <div className="flex space-x-3 mt-6">
-          {[1, 3, 5].map((sol) => (
+          {[0, 1, 3, 5].map((sol) => (
             <button
               key={sol}
               onClick={() => handleLaunch(sol)}

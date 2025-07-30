@@ -5,7 +5,6 @@ import LaunchModal from './LaunchModal';
 import { TwitterPost } from '../interfaces/TwitterPost';
 import { mockPosts } from '../mock/mockTwitterFeed';
 
-// Fisher-Yates shuffle algorithm
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -15,7 +14,6 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
-// Extended interface for displayed posts with unique keys
 interface DisplayedPost extends TwitterPost {
   displayKey: string;
 }
@@ -29,7 +27,6 @@ export default function TwitterFeed() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize shuffled posts when component mounts
   useEffect(() => {
     const shuffled = shuffleArray(mockPosts);
     setShuffledPosts(shuffled);
@@ -69,16 +66,13 @@ export default function TwitterFeed() {
     };
   }, [shuffledPosts, currentIndex]);
 
-  // Handle hover pause/resume
   useEffect(() => {
     if (isHovered) {
-      // Pause the interval
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     } else {
-      // Resume the interval
       if (!intervalRef.current && shuffledPosts.length > 0) {
         intervalRef.current = setInterval(() => {
           setDisplayedPosts(currentPosts => {
@@ -91,7 +85,6 @@ export default function TwitterFeed() {
           
           setCurrentIndex(prevIndex => {
             const nextIndex = prevIndex + 1;
-            // If we've gone through all posts, reshuffle for next cycle
             if (nextIndex >= shuffledPosts.length) {
               setShuffledPosts(shuffleArray(mockPosts));
               return 0;
@@ -102,8 +95,6 @@ export default function TwitterFeed() {
       }
     }
   }, [isHovered, shuffledPosts, currentIndex]);
-
-
 
   const handleLaunch = (post: TwitterPost) => {
     setSelectedPost(post);
@@ -121,7 +112,6 @@ export default function TwitterFeed() {
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    // The useEffect will handle resuming the interval
   };
 
   return (

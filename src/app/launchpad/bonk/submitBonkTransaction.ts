@@ -5,7 +5,6 @@ import { txToBase64 } from "@raydium-io/raydium-sdk-v2";
 
 export async function submitBonkTransaction (signedTransaction: VersionedTransaction) {
   try {
-    // Send the signed transaction to Bonk platform for registration
     const { data } = await axios.post(`${MINT_HOST}/create/sendTransaction`, {
       txs: [txToBase64(signedTransaction)],
     })

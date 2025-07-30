@@ -172,7 +172,6 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
           formDataToSend.append('image', imageToUse);
         }
 
-        // Call the API route instead of the client-side function
         const response = await fetch('/api/launchpad/bonk', {
           method: 'POST',
           body: formDataToSend
@@ -180,9 +179,7 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
 
         const result = await response.json();
 
-        // Deserialize the transaction from base64
         if (result.success && result.transaction) {
-          // Convert base64 to Uint8Array for browser compatibility
           const binaryString = atob(result.transaction);
           const transactionBuffer = new Uint8Array(binaryString.length);
           for (let i = 0; i < binaryString.length; i++) {
@@ -192,7 +189,6 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
         }
 
         if (result.success && result.transaction) {
-          // First, sign the transaction with the user's wallet
           if (!signTransaction) {
             setError('Wallet does not support transaction signing');
             return;
@@ -207,7 +203,6 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
             return;
           }
           
-          // Finally, send the signed transaction to the blockchain
           const txId = await connection.sendTransaction(signedTransaction, { skipPreflight: true });
           
           // Save the launched token to localStorage
@@ -256,9 +251,7 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
 
         const result = await response.json();
 
-        // Deserialize the transaction from base64
         if (result.success && result.transaction) {
-          // Convert base64 to Uint8Array for browser compatibility
           const binaryString = atob(result.transaction);
           const transactionBuffer = new Uint8Array(binaryString.length);
           for (let i = 0; i < binaryString.length; i++) {
@@ -268,7 +261,6 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
         }
 
         if (result.success && result.transaction) {
-          // Sign the transaction with the user's wallet
           if (!signTransaction) {
             setError('Wallet does not support transaction signing');
             return;
@@ -276,7 +268,6 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
           
           const signedTransaction = await signTransaction(result.transaction);
           
-          // Send the signed transaction to the blockchain
           const txId = await connection.sendTransaction(signedTransaction, { skipPreflight: true });
           
           // Save the launched token to localStorage

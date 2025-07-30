@@ -1,10 +1,11 @@
-export interface CreateAndBuyMint {
+export interface MintConfig {
   name: string;
   symbol: string;
-  decimals: number;
+  decimals?: number;
   description: string;
   uri: string;
   website?: string;
   twitter?: string;
-  image?: File;
+  telegram?: string;
+  image?: File | string;
 }

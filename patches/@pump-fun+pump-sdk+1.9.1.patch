@@ -1,0 +1,449 @@
+diff --git a/node_modules/@pump-fun/pump-sdk/dist/esm/index.js b/node_modules/@pump-fun/pump-sdk/dist/esm/index.js
+index a4e93d4..5bf17eb 100644
+--- a/node_modules/@pump-fun/pump-sdk/dist/esm/index.js
++++ b/node_modules/@pump-fun/pump-sdk/dist/esm/index.js
+@@ -4105,11 +4105,14 @@ function getSellSolAmountFromTokenAmount(global, bondingCurve, amount) {
+ // src/pda.ts
+ import { PublicKey as PublicKey3 } from "@solana/web3.js";
+ import { NATIVE_MINT as NATIVE_MINT2 } from "@solana/spl-token";
+-import { poolPda } from "@pump-fun/pump-swap-sdk";
++// import { poolPda } from "@pump-fun/pump-swap-sdk";
+ 
+ // src/sdk.ts
+ import { AnchorProvider, Program } from "@coral-xyz/anchor";
+-import { PumpAmmAdminSdk, PumpAmmSdk } from "@pump-fun/pump-swap-sdk";
++import { 
++  PumpAmmSdk, 
++//  PumpAmmAdminSdk
++} from "@pump-fun/pump-swap-sdk";
+ import {
+   createAssociatedTokenAccountIdempotentInstruction,
+   getAssociatedTokenAddressSync,
+@@ -4213,10 +4216,10 @@ var PumpSdk = class {
+       pumpProgramId
+     );
+     this.pumpAmmSdk = new PumpAmmSdk(connection, pumpAmmProgramId.toBase58());
+-    this.pumpAmmAdminSdk = new PumpAmmAdminSdk(
+-      connection,
+-      pumpAmmProgramId.toBase58()
+-    );
++    // this.pumpAmmAdminSdk = new PumpAmmSdk(
++    //   connection,
++    //   pumpAmmProgramId.toBase58()
++    // );
+   }
+   programId() {
+     return this.offlinePumpProgram.programId;
+@@ -4527,16 +4530,16 @@ var PumpSdk = class {
+       })
+     ];
+   }
+-  async adminSetCoinCreatorInstructions(newCoinCreator, mint) {
+-    const global = await this.fetchGlobal();
+-    return [
+-      await this.offlinePumpProgram.methods.adminSetCreator(newCoinCreator).accountsPartial({
+-        adminSetCreatorAuthority: global.adminSetCreatorAuthority,
+-        mint
+-      }).instruction(),
+-      await this.pumpAmmAdminSdk.adminSetCoinCreator(mint, newCoinCreator)
+-    ];
+-  }
++  // async adminSetCoinCreatorInstructions(newCoinCreator, mint) {
++  //   const global = await this.fetchGlobal();
++  //   return [
++  //     await this.offlinePumpProgram.methods.adminSetCreator(newCoinCreator).accountsPartial({
++  //       adminSetCreatorAuthority: global.adminSetCreatorAuthority,
++  //       mint
++  //     }).instruction(),
++  //     await this.pumpAmmAdminSdk.adminSetCoinCreator(mint, newCoinCreator)
++  //   ];
++  // }
+   async getCreatorVaultBalance(creator) {
+     const creatorVault = this.creatorVaultPda(creator);
+     const accountInfo = await this.connection.getAccountInfo(creatorVault);
+@@ -4566,28 +4569,28 @@ var PumpSdk = class {
+       tokenProgram
+     }).instruction();
+   }
+-  async adminUpdateTokenIncentivesBothPrograms(startTime, endTime, dayNumber, tokenSupplyPerDay, secondsInADay = new BN3(86400), mint = PUMP_TOKEN_MINT, tokenProgram = TOKEN_2022_PROGRAM_ID) {
+-    return [
+-      await this.adminUpdateTokenIncentives(
+-        startTime,
+-        endTime,
+-        dayNumber,
+-        tokenSupplyPerDay,
+-        secondsInADay,
+-        mint,
+-        tokenProgram
+-      ),
+-      await this.pumpAmmAdminSdk.adminUpdateTokenIncentives(
+-        startTime,
+-        endTime,
+-        dayNumber,
+-        tokenSupplyPerDay,
+-        secondsInADay,
+-        mint,
+-        tokenProgram
+-      )
+-    ];
+-  }
++  // async adminUpdateTokenIncentivesBothPrograms(startTime, endTime, dayNumber, tokenSupplyPerDay, secondsInADay = new BN3(86400), mint = PUMP_TOKEN_MINT, tokenProgram = TOKEN_2022_PROGRAM_ID) {
++  //   return [
++  //     await this.adminUpdateTokenIncentives(
++  //       startTime,
++  //       endTime,
++  //       dayNumber,
++  //       tokenSupplyPerDay,
++  //       secondsInADay,
++  //       mint,
++  //       tokenProgram
++  //     ),
++  //     await this.pumpAmmAdminSdk.adminUpdateTokenIncentives(
++  //       startTime,
++  //       endTime,
++  //       dayNumber,
++  //       tokenSupplyPerDay,
++  //       secondsInADay,
++  //       mint,
++  //       tokenProgram
++  //     )
++  //   ];
++  // }
+   async claimTokenIncentives(user, payer) {
+     const { mint } = await this.fetchGlobalVolumeAccumulator();
+     if (mint.equals(PublicKey2.default)) {
+diff --git a/node_modules/@pump-fun/pump-sdk/dist/index.d.ts b/node_modules/@pump-fun/pump-sdk/dist/index.d.ts
+index 8f92af2..565518a 100644
+--- a/node_modules/@pump-fun/pump-sdk/dist/index.d.ts
++++ b/node_modules/@pump-fun/pump-sdk/dist/index.d.ts
+@@ -8153,7 +8153,7 @@ declare class PumpSdk {
+     private readonly pumpProgram;
+     private readonly offlinePumpProgram;
+     private readonly pumpAmmSdk;
+-    private readonly pumpAmmAdminSdk;
++    // private readonly pumpAmmAdminSdk;
+     constructor(connection: Connection, pumpProgramId?: PublicKey, pumpAmmProgramId?: PublicKey);
+     programId(): PublicKey;
+     globalPda(): PublicKey;
+diff --git a/node_modules/@pump-fun/pump-sdk/src/sdk.ts b/node_modules/@pump-fun/pump-sdk/src/sdk.ts
+index 1db1512..b99cd66 100644
+--- a/node_modules/@pump-fun/pump-sdk/src/sdk.ts
++++ b/node_modules/@pump-fun/pump-sdk/src/sdk.ts
+@@ -1,5 +1,8 @@
+ import { AnchorProvider, Program } from "@coral-xyz/anchor";
+-import { PumpAmmAdminSdk, PumpAmmSdk } from "@pump-fun/pump-swap-sdk";
++import { 
++  // PumpAmmAdminSdk, 
++  PumpAmmSdk 
++} from "@pump-fun/pump-swap-sdk";
+ import {
+   createAssociatedTokenAccountIdempotentInstruction,
+   getAssociatedTokenAddressSync,
+@@ -68,7 +71,7 @@ export class PumpSdk {
+   private readonly pumpProgram: Program<Pump>;
+   private readonly offlinePumpProgram: Program<Pump>;
+   private readonly pumpAmmSdk: PumpAmmSdk;
+-  private readonly pumpAmmAdminSdk: PumpAmmAdminSdk;
++  // private readonly pumpAmmAdminSdk: PumpAmmAdminSdk;
+ 
+   constructor(
+     connection: Connection,
+@@ -83,11 +86,11 @@ export class PumpSdk {
+       pumpProgramId,
+     );
+ 
+-    this.pumpAmmSdk = new PumpAmmSdk(connection, pumpAmmProgramId.toBase58());
+-    this.pumpAmmAdminSdk = new PumpAmmAdminSdk(
+-      connection,
+-      pumpAmmProgramId.toBase58(),
+-    );
++    this.pumpAmmSdk = new PumpAmmSdk(connection);
++    // this.pumpAmmAdminSdk = new PumpAmmAdminSdk(
++    //   connection,
++    //   pumpAmmProgramId.toBase58(),
++    // );
+   }
+ 
+   programId(): PublicKey {
+@@ -476,69 +479,69 @@ export class PumpSdk {
+       .instruction();
+   }
+ 
+-  async collectCoinCreatorFeeInstructions(
+-    coinCreator: PublicKey,
+-  ): Promise<TransactionInstruction[]> {
+-    let quoteMint = NATIVE_MINT;
+-    let quoteTokenProgram = TOKEN_PROGRAM_ID;
+-
+-    let coinCreatorVaultAuthority =
+-      this.pumpAmmSdk.coinCreatorVaultAuthorityPda(coinCreator);
+-    let coinCreatorVaultAta = this.pumpAmmSdk.coinCreatorVaultAta(
+-      coinCreatorVaultAuthority,
+-      quoteMint,
+-      quoteTokenProgram,
+-    );
+-
+-    let coinCreatorTokenAccount = getAssociatedTokenAddressSync(
+-      quoteMint,
+-      coinCreator,
+-      true,
+-      quoteTokenProgram,
+-    );
+-    const [coinCreatorVaultAtaAccountInfo, coinCreatorTokenAccountInfo] =
+-      await this.connection.getMultipleAccountsInfo([
+-        coinCreatorVaultAta,
+-        coinCreatorTokenAccount,
+-      ]);
+-
+-    return [
+-      await this.offlinePumpProgram.methods
+-        .collectCreatorFee()
+-        .accountsPartial({
+-          creator: coinCreator,
+-        })
+-        .instruction(),
+-      ...(await this.pumpAmmSdk.collectCoinCreatorFee({
+-        coinCreator,
+-        quoteMint,
+-        quoteTokenProgram,
+-        coinCreatorVaultAuthority,
+-        coinCreatorVaultAta,
+-        coinCreatorTokenAccount,
+-        coinCreatorVaultAtaAccountInfo,
+-        coinCreatorTokenAccountInfo,
+-      })),
+-    ];
+-  }
+-
+-  async adminSetCoinCreatorInstructions(
+-    newCoinCreator: PublicKey,
+-    mint: PublicKey,
+-  ): Promise<TransactionInstruction[]> {
+-    const global = await this.fetchGlobal();
+-
+-    return [
+-      await this.offlinePumpProgram.methods
+-        .adminSetCreator(newCoinCreator)
+-        .accountsPartial({
+-          adminSetCreatorAuthority: global.adminSetCreatorAuthority,
+-          mint,
+-        })
+-        .instruction(),
+-      await this.pumpAmmAdminSdk.adminSetCoinCreator(mint, newCoinCreator),
+-    ];
+-  }
++  // async collectCoinCreatorFeeInstructions(
++  //   coinCreator: PublicKey,
++  // ): Promise<TransactionInstruction[]> {
++  //   let quoteMint = NATIVE_MINT;
++  //   let quoteTokenProgram = TOKEN_PROGRAM_ID;
++
++  //   let coinCreatorVaultAuthority =
++  //     this.pumpAmmSdk.coinCreatorVaultAuthorityPda(coinCreator);
++  //   let coinCreatorVaultAta = this.pumpAmmSdk.coinCreatorVaultAta(
++  //     coinCreatorVaultAuthority,
++  //     quoteMint,
++  //     quoteTokenProgram,
++  //   );
++
++  //   let coinCreatorTokenAccount = getAssociatedTokenAddressSync(
++  //     quoteMint,
++  //     coinCreator,
++  //     true,
++  //     quoteTokenProgram,
++  //   );
++  //   const [coinCreatorVaultAtaAccountInfo, coinCreatorTokenAccountInfo] =
++  //     await this.connection.getMultipleAccountsInfo([
++  //       coinCreatorVaultAta,
++  //       coinCreatorTokenAccount,
++  //     ]);
++
++  //   return [
++  //     await this.offlinePumpProgram.methods
++  //       .collectCreatorFee()
++  //       .accountsPartial({
++  //         creator: coinCreator,
++  //       })
++  //       .instruction(),
++  //     ...(await this.pumpAmmSdk.collectCoinCreatorFee({
++  //       coinCreator,
++  //       quoteMint,
++  //       quoteTokenProgram,
++  //       coinCreatorVaultAuthority,
++  //       coinCreatorVaultAta,
++  //       coinCreatorTokenAccount,
++  //       coinCreatorVaultAtaAccountInfo,
++  //       coinCreatorTokenAccountInfo,
++  //     })),
++  //   ];
++  // }
++
++  // async adminSetCoinCreatorInstructions(
++  //   newCoinCreator: PublicKey,
++  //   mint: PublicKey,
++  // ): Promise<TransactionInstruction[]> {
++  //   const global = await this.fetchGlobal();
++
++  //   return [
++  //     await this.offlinePumpProgram.methods
++  //       .adminSetCreator(newCoinCreator)
++  //       .accountsPartial({
++  //         adminSetCreatorAuthority: global.adminSetCreatorAuthority,
++  //         mint,
++  //       })
++  //       .instruction(),
++  //     await this.pumpAmmAdminSdk.adminSetCoinCreator(mint, newCoinCreator),
++  //   ];
++  // }
+ 
+   async getCreatorVaultBalance(creator: PublicKey): Promise<BN> {
+     const creatorVault = this.creatorVaultPda(creator);
+@@ -588,36 +591,36 @@ export class PumpSdk {
+       .instruction();
+   }
+ 
+-  async adminUpdateTokenIncentivesBothPrograms(
+-    startTime: BN,
+-    endTime: BN,
+-    dayNumber: BN,
+-    tokenSupplyPerDay: BN,
+-    secondsInADay: BN = new BN(86_400),
+-    mint: PublicKey = PUMP_TOKEN_MINT,
+-    tokenProgram: PublicKey = TOKEN_2022_PROGRAM_ID,
+-  ): Promise<TransactionInstruction[]> {
+-    return [
+-      await this.adminUpdateTokenIncentives(
+-        startTime,
+-        endTime,
+-        dayNumber,
+-        tokenSupplyPerDay,
+-        secondsInADay,
+-        mint,
+-        tokenProgram,
+-      ),
+-      await this.pumpAmmAdminSdk.adminUpdateTokenIncentives(
+-        startTime,
+-        endTime,
+-        dayNumber,
+-        tokenSupplyPerDay,
+-        secondsInADay,
+-        mint,
+-        tokenProgram,
+-      ),
+-    ];
+-  }
++  // async adminUpdateTokenIncentivesBothPrograms(
++  //   startTime: BN,
++  //   endTime: BN,
++  //   dayNumber: BN,
++  //   tokenSupplyPerDay: BN,
++  //   secondsInADay: BN = new BN(86_400),
++  //   mint: PublicKey = PUMP_TOKEN_MINT,
++  //   tokenProgram: PublicKey = TOKEN_2022_PROGRAM_ID,
++  // ): Promise<TransactionInstruction[]> {
++  //   return [
++  //     await this.adminUpdateTokenIncentives(
++  //       startTime,
++  //       endTime,
++  //       dayNumber,
++  //       tokenSupplyPerDay,
++  //       secondsInADay,
++  //       mint,
++  //       tokenProgram,
++  //     ),
++  //     await this.pumpAmmAdminSdk.adminUpdateTokenIncentives(
++  //       startTime,
++  //       endTime,
++  //       dayNumber,
++  //       tokenSupplyPerDay,
++  //       secondsInADay,
++  //       mint,
++  //       tokenProgram,
++  //     ),
++  //   ];
++  // }
+ 
+   async claimTokenIncentives(
+     user: PublicKey,
+@@ -656,15 +659,15 @@ export class PumpSdk {
+     ];
+   }
+ 
+-  async claimTokenIncentivesBothPrograms(
+-    user: PublicKey,
+-    payer: PublicKey,
+-  ): Promise<TransactionInstruction[]> {
+-    return [
+-      ...(await this.claimTokenIncentives(user, payer)),
+-      ...(await this.pumpAmmSdk.claimTokenIncentives(user, payer)),
+-    ];
+-  }
++  // async claimTokenIncentivesBothPrograms(
++  //   user: PublicKey,
++  //   payer: PublicKey,
++  // ): Promise<TransactionInstruction[]> {
++  //   return [
++  //     ...(await this.claimTokenIncentives(user, payer)),
++  //     ...(await this.pumpAmmSdk.claimTokenIncentives(user, payer)),
++  //   ];
++  // }
+ 
+   async getTotalUnclaimedTokens(user: PublicKey): Promise<BN> {
+     const [
+@@ -692,11 +695,11 @@ export class PumpSdk {
+     return totalUnclaimedTokens(globalVolumeAccumulator, userVolumeAccumulator);
+   }
+ 
+-  async getTotalUnclaimedTokensBothPrograms(user: PublicKey): Promise<BN> {
+-    return (await this.getTotalUnclaimedTokens(user)).add(
+-      await this.pumpAmmSdk.getTotalUnclaimedTokens(user),
+-    );
+-  }
++  // async getTotalUnclaimedTokensBothPrograms(user: PublicKey): Promise<BN> {
++  //   return (await this.getTotalUnclaimedTokens(user)).add(
++  //     await this.pumpAmmSdk.getTotalUnclaimedTokens(user),
++  //   );
++  // }
+ 
+   async getCurrentDayTokens(user: PublicKey): Promise<BN> {
+     const [
+@@ -724,11 +727,11 @@ export class PumpSdk {
+     return currentDayTokens(globalVolumeAccumulator, userVolumeAccumulator);
+   }
+ 
+-  async getCurrentDayTokensBothPrograms(user: PublicKey): Promise<BN> {
+-    return (await this.getCurrentDayTokens(user)).add(
+-      await this.pumpAmmSdk.getCurrentDayTokens(user),
+-    );
+-  }
++  // async getCurrentDayTokensBothPrograms(user: PublicKey): Promise<BN> {
++  //   return (await this.getCurrentDayTokens(user)).add(
++  //     await this.pumpAmmSdk.getCurrentDayTokens(user),
++  //   );
++  // }
+ 
+   async syncUserVolumeAccumulator(
+     user: PublicKey,
+@@ -739,14 +742,14 @@ export class PumpSdk {
+       .instruction();
+   }
+ 
+-  async syncUserVolumeAccumulatorBothPrograms(
+-    user: PublicKey,
+-  ): Promise<TransactionInstruction[]> {
+-    return [
+-      await this.syncUserVolumeAccumulator(user),
+-      await this.pumpAmmSdk.syncUserVolumeAccumulator(user),
+-    ];
+-  }
++  // async syncUserVolumeAccumulatorBothPrograms(
++  //   user: PublicKey,
++  // ): Promise<TransactionInstruction[]> {
++  //   return [
++  //     await this.syncUserVolumeAccumulator(user),
++  //     await this.pumpAmmSdk.syncUserVolumeAccumulator(user),
++  //   ];
++  // }
+ }
+ 
+ function getFeeRecipient(global: Global): PublicKey {

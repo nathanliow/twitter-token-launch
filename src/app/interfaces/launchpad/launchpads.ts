@@ -1,3 +1,4 @@
 export const launchpads = [
-  { id: 'bonk', name: 'Let\'s Bonk', icon: '🟠' },
+  { id: 'pump', name: 'Pump.Fun', icon: '/Pump.png' },
+  { id: 'bonk', name: 'Let\'s Bonk', icon: '/Bonk.png' },
 ]

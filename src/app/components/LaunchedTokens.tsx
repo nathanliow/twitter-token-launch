@@ -112,7 +112,7 @@ export default function LaunchedTokens() {
             
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>{formatDate(token.timestamp)}</span>
-              <span>{token.solAmount} SOL</span>
+              <span>{token.solBuyAmount} SOL</span>
             </div>
             
             <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">

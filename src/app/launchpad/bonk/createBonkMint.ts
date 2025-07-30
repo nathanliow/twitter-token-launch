@@ -1,3 +1,5 @@
+import axios from 'axios'
+import BN from 'bn.js'
 import {
   TxVersion,
   LaunchpadConfig,
@@ -5,31 +7,28 @@ import {
   LaunchpadPoolInitParam
 } from '@raydium-io/raydium-sdk-v2'
 import { initSdk } from './config'
-import BN from 'bn.js'
 import { 
   LAMPORTS_PER_SOL, 
   PublicKey, 
   VersionedTransaction 
 } from '@solana/web3.js'
-import axios from 'axios'
 import { 
-  BONK_PLATFORM_ID_2, 
-  configRes,
+  BONK_PLATFORM_ADDR_2, 
+  BONK_CONFIG_RES,
   MINT_HOST 
-} from './consts'
-import { CreateAndBuyMint } from '../../interfaces/launchpad/bonk/CreateMint'
+} from '../consts'
+import { MintConfig } from '../../interfaces/launchpad/MintConfig'
 
 interface CreateBonkMintProps {
-  params: CreateAndBuyMint;
+  params: MintConfig;
   walletPublicKey: PublicKey;
-  solAmount: number;
+  solBuyAmount: number;
 }
 
-export async function createBonkMint ({ params, walletPublicKey, solAmount }: CreateBonkMintProps): Promise<{
+export async function createBonkMint ({ params, walletPublicKey, solBuyAmount }: CreateBonkMintProps): Promise<{
   success: boolean;
   transaction: VersionedTransaction;
   mint: string;
-  metadataLink: string;
   error?: string;
 } | {
   success: false;
@@ -41,7 +40,7 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
 
     const programId = LAUNCHPAD_PROGRAM
 
-    const configs = configRes.data.data[0].key
+    const configs = BONK_CONFIG_RES.data.data[0].key
     const configInfo: ReturnType<typeof LaunchpadConfig.decode> = {
       index: configs.index,
       mintB: new PublicKey(configs.mintB),
@@ -61,22 +60,22 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       migrateToCpmmWallet: new PublicKey(configs.migrateToCpmmWallet),
     }
 
-    const configId = new PublicKey(configRes.data.data[0].key.pubKey)
-    const mintBInfo = configRes.data.data[0].mintInfoB
+    const configId = new PublicKey(BONK_CONFIG_RES.data.data[0].key.pubKey)
+    const mintBInfo = BONK_CONFIG_RES.data.data[0].mintInfoB
 
     const newMintData = {
       wallet: owner.toBase58(),
       name: params.name,
       symbol: params.symbol,
       configId: configId.toString(),
-      decimals: params.decimals,
+      decimals: params.decimals || 6,
       supply: LaunchpadPoolInitParam.supply, 
       totalSellA: LaunchpadPoolInitParam.totalSellA, 
       totalFundRaisingB: LaunchpadPoolInitParam.totalFundRaisingB,
       totalLockedAmount: LaunchpadPoolInitParam.totalLockedAmount,
       cliffPeriod: LaunchpadPoolInitParam.cliffPeriod,
       unlockPeriod: LaunchpadPoolInitParam.unlockPeriod,
-      platformId: new PublicKey(BONK_PLATFORM_ID_2),
+      platformId: new PublicKey(BONK_PLATFORM_ADDR_2),
       migrateType: 'amm', // or cpmm
       description: params.description,
     }
@@ -89,6 +88,10 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       // @ts-ignore
       newMintData.twitter = params.twitter
     }
+    if (params.telegram && params.telegram.trim()) {
+      // @ts-ignore
+      newMintData.telegram = params.telegram
+    }
 
     const form = new FormData()
     Object.keys(newMintData).forEach((key) => {
@@ -96,7 +99,7 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       form.append(key, newMintData[key])
     })
 
-    if (params.image) {
+    if (params.image instanceof File) {
       form.append('file', params.image, params.image.name)
     } else {
       const canvas = document.createElement('canvas')
@@ -132,7 +135,7 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
     const { transactions } = await raydium.launchpad.createLaunchpad({
       programId,
       mintA,
-      decimals: newMintData.decimals,
+      decimals: newMintData.decimals || 6,
       name: newMintData.name,
       symbol: newMintData.symbol,
       uri: randomMint.data.data.metadataLink,
@@ -144,8 +147,8 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       platformId: newMintData.platformId,
       txVersion: TxVersion.V0,
       slippage: new BN(100), // 100 = 1%
-      buyAmount: solAmount !== 0 ? new BN(solAmount * LAMPORTS_PER_SOL) : new BN(0), 
-      createOnly: solAmount !== 0 ? false : true,
+      buyAmount: solBuyAmount !== 0 ? new BN(solBuyAmount * LAMPORTS_PER_SOL) : new BN(0), 
+      createOnly: solBuyAmount !== 0 ? false : true,
 
       supply: newMintData.supply, 
       totalSellA: newMintData.totalSellA, 
@@ -161,7 +164,6 @@ export async function createBonkMint ({ params, walletPublicKey, solAmount }: Cr
       success: true,
       transaction,
       mint: randomMint.data.data.mint,
-      metadataLink: randomMint.data.data.metadataLink,
     }
 
   } catch (error) {

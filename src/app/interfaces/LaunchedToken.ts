@@ -6,9 +6,8 @@ export interface LaunchedToken {
   mint: string;
   txId: string;
   platform: 'bonk' | 'pump';
-  solAmount: number;
+  solBuyAmount: number;
   timestamp: string;
   website?: string;
   twitterUrl?: string;
-  metadataLink?: string;
 } 

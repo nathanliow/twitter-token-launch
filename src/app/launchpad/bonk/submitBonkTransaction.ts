@@ -1,6 +1,6 @@
-import { VersionedTransaction } from "@solana/web3.js";
 import axios from "axios";
-import { MINT_HOST } from "./consts";
+import { VersionedTransaction } from "@solana/web3.js";
+import { MINT_HOST } from "../consts";
 import { txToBase64 } from "@raydium-io/raydium-sdk-v2";
 
 export async function submitBonkTransaction (signedTransaction: VersionedTransaction) {

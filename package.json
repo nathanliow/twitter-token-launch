@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "patch-package"
   },
   "dependencies": {
+    "@pump-fun/pump-sdk": "^1.9.1",
     "@raydium-io/raydium-sdk-v2": "^0.2.6-alpha",
     "@solana/kit": "^2.3.0",
     "@solana/wallet-adapter-base": "^0.9.27",
@@ -25,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "patch-package": "^8.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

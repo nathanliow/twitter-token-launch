@@ -136,7 +136,7 @@ export default function TwitterFeed() {
           <div className="absolute top-4 left-4 right-4 z-10 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-3 rounded shadow-lg">
             <div className="flex items-center">
               <span className="text-yellow-700 dark:text-yellow-300 font-medium">
-                ⏸️ Feed paused - Remove hover to continue
+                ⏸️ Feed paused
               </span>
             </div>
           </div>

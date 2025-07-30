@@ -504,7 +504,7 @@ export default function LaunchModal({ post, onClose }: LaunchModalProps) {
         </div>
 
         <div className="flex space-x-3 mt-6">
-          {[0, 1, 3, 5].map((solBuyAmount) => {
+          {[0.01, 1, 3, 5].map((solBuyAmount) => {
             const selectedPlatform = launchpads.find((platform) => platform.id === formData.selectedPlatform);
             return (
               <button
